@@ -1,0 +1,62 @@
+.register-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-lg);
+  background-color: var(--bg-primary);
+}
+
+.register-container {
+  width: 100%;
+  max-width: 480px;
+}
+
+.register-card {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-2xl);
+  box-shadow: var(--shadow-lg);
+}
+
+.register-title {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.register-footer {
+  margin-top: var(--spacing-lg);
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.register-footer a {
+  color: var(--accent);
+  transition: color var(--transition-base);
+}
+
+.register-footer a:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  .register-card {
+    padding: var(--spacing-xl);
+  }
+
+  .register-title {
+    font-size: 1.5rem;
+  }
+}

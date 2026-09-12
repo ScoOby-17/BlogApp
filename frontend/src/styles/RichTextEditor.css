@@ -1,0 +1,140 @@
+/* Dark theme for React Quill */
+.rich-text-editor {
+  margin-bottom: var(--spacing-lg);
+}
+
+.rich-text-editor .ql-toolbar {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md) var(--radius-md) 0 0;
+  padding: var(--spacing-sm);
+}
+
+.rich-text-editor .ql-container {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-top: none;
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  font-size: 0.95rem;
+  color: var(--text-primary);
+  min-height: 300px;
+}
+
+.rich-text-editor .ql-editor {
+  min-height: 300px;
+  color: var(--text-primary);
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  color: var(--text-muted);
+  font-style: normal;
+}
+
+/* Toolbar buttons */
+.rich-text-editor .ql-toolbar button,
+.rich-text-editor .ql-toolbar .ql-picker-label {
+  color: var(--text-secondary);
+}
+
+.rich-text-editor .ql-toolbar button:hover,
+.rich-text-editor .ql-toolbar .ql-picker-label:hover {
+  color: var(--text-primary);
+}
+
+.rich-text-editor .ql-toolbar button.ql-active,
+.rich-text-editor .ql-toolbar .ql-picker-label.ql-active {
+  color: var(--accent);
+}
+
+.rich-text-editor .ql-toolbar .ql-stroke {
+  stroke: var(--text-secondary);
+}
+
+.rich-text-editor .ql-toolbar button:hover .ql-stroke,
+.rich-text-editor .ql-toolbar .ql-picker-label:hover .ql-stroke {
+  stroke: var(--text-primary);
+}
+
+.rich-text-editor .ql-toolbar button.ql-active .ql-stroke,
+.rich-text-editor .ql-toolbar .ql-picker-label.ql-active .ql-stroke {
+  stroke: var(--accent);
+}
+
+.rich-text-editor .ql-toolbar .ql-fill {
+  fill: var(--text-secondary);
+}
+
+.rich-text-editor .ql-toolbar button:hover .ql-fill,
+.rich-text-editor .ql-toolbar .ql-picker-label:hover .ql-fill {
+  fill: var(--text-primary);
+}
+
+.rich-text-editor .ql-toolbar button.ql-active .ql-fill,
+.rich-text-editor .ql-toolbar .ql-picker-label.ql-active .ql-fill {
+  fill: var(--accent);
+}
+
+/* Picker dropdowns */
+.rich-text-editor .ql-toolbar .ql-picker-options {
+  background-color: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: var(--spacing-xs);
+}
+
+.rich-text-editor .ql-toolbar .ql-picker-item {
+  color: var(--text-secondary);
+}
+
+.rich-text-editor .ql-toolbar .ql-picker-item:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-hover);
+}
+
+/* Editor content styles */
+.rich-text-editor .ql-editor h1,
+.rich-text-editor .ql-editor h2,
+.rich-text-editor .ql-editor h3 {
+  color: var(--text-primary);
+}
+
+.rich-text-editor .ql-editor a {
+  color: var(--accent);
+}
+
+.rich-text-editor .ql-editor blockquote {
+  border-left: 4px solid var(--accent);
+  padding-left: var(--spacing-md);
+  color: var(--text-secondary);
+}
+
+.rich-text-editor .ql-editor pre {
+  background-color: var(--bg-tertiary);
+  color: var(--text-primary);
+  border-radius: var(--radius-md);
+}
+
+.rich-text-editor .ql-editor code {
+  background-color: var(--bg-tertiary);
+  color: var(--accent);
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+
+/* Focus state */
+.rich-text-editor .ql-container.ql-snow {
+  border-color: var(--border-color);
+}
+
+.rich-text-editor .ql-editor:focus {
+  outline: none;
+}
+
+.rich-text-editor:focus-within .ql-container {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-light);
+}
+
+.rich-text-editor:focus-within .ql-toolbar {
+  border-color: var(--accent);
+}

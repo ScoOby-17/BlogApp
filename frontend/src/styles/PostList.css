@@ -1,0 +1,19 @@
+.post-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+}
+
+@media (max-width: 1024px) {
+  .post-list {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .post-list {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}

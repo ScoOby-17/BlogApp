@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(Get-Process -Id 18460)",
+      "Bash(Stop-Process -Force)",
+      "Bash(taskkill *)",
+      "Bash(powershell -command \"& {Get-Process -Id \\(Get-NetTCPConnection -LocalPort 5000\\).OwningProcess | Stop-Process -Force}\")",
+      "Bash(npm run *)",
+      "Bash(curl *)"
+    ]
+  }
+}

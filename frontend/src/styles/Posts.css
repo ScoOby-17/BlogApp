@@ -1,0 +1,39 @@
+.posts-page {
+  padding: var(--spacing-2xl) 0;
+  min-height: calc(100vh - 140px); /* Account for navbar and footer */
+}
+
+.posts-section {
+  margin-top: var(--spacing-2xl);
+}
+
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+}
+
+@media (max-width: 1024px) {
+  .posts-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .posts-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+}
+
+.no-posts {
+  text-align: center;
+  padding: var(--spacing-2xl) * 2;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,85 @@
+// This file starts the Express API server, connects to MongoDB, configures middleware,
+// and registers every API route.
+
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import connectDB from './config/db.js';
+import errorHandler from './middlewares/error.middleware.js';
+import adminRoutes from './routes/admin.routes.js';
+import authRoutes from './routes/auth.routes.js';
+import commentRoutes from './routes/comment.routes.js';
+import postRoutes from './routes/post.routes.js';
+import userRoutes from './routes/user.routes.js';
+
+// ES modules do not provide __dirname automatically, so create it from this file's URL.
+const currentFilePath = fileURLToPath(import.meta.url);
+const currentDirectoryPath = path.dirname(currentFilePath);
+const app = express();
+const port = process.env.PORT || 5000;
+
+/**
+ * Configures middleware that every incoming request may need.
+ * @returns {void}
+ */
+const configureMiddleware = () => {
+  const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
+
+  // Allow the frontend to send cookies with cross-origin API requests.
+  // app.use(cors({
+  //   origin: clientUrl,
+  //   credentials: true
+  // }));
+  app.use(cors());
+
+  // Parse JSON, form submissions, and browser cookies before routes run.
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
+  app.use(cookieParser());
+
+  // Make files in backend/uploads available at the /uploads URL.
+  const uploadsDirectoryPath = path.join(currentDirectoryPath, 'uploads');
+  app.use('/uploads', express.static(uploadsDirectoryPath));
+};
+
+/**
+ * Registers the application's API route groups and health-check endpoint.
+ * @returns {void}
+ */
+const configureRoutes = () => {
+  app.use('/api/auth', authRoutes);
+  app.use('/api/posts', postRoutes);
+  app.use('/api', commentRoutes);
+  app.use('/api/users', userRoutes);
+  app.use('/api/admin', adminRoutes);
+
+  // A simple endpoint for confirming that the API server is available.
+  app.get('/api/health', (req, res) => {
+    res.json({ success: true, message: 'Server is running' });
+  });
+};
+
+/**
+ * Starts the database connection and HTTP server.
+ * @returns {Promise<void>} Resolves after the server begins listening
+ */
+const startServer = async () => {
+  console.log('Starting the Blog API server...');
+  await connectDB();
+
+  configureMiddleware();
+  configureRoutes();
+
+  // The error handler must be registered after all routes and middleware.
+  app.use(errorHandler);
+
+  app.listen(port, () => {
+    console.log(`✅ Server is running on port ${port}`);
+    console.log(`✅ Health check: http://localhost:${port}/api/health`);
+  });
+};
+
+startServer();
