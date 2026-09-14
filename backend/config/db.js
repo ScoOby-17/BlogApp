@@ -10,15 +10,16 @@ import mongoose from 'mongoose';
 const connectDB = async () => {
   try {
     // Connect to MongoDB using the URI from .env file
+    console.log("mongoDB URI" , process.env.MONGO_URI)
     const conn = await mongoose.connect(process.env.MONGO_URI);
 
     // Log success message showing which database host we connected to
-    console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    console.log(` MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
     // If connection fails, log the error and stop the application
-    console.error(`❌ MongoDB Connection Error: ${error.message}`);
+    console.error(` MongoDB Connection Error: ${error.message}`);
     process.exit(1); // Exit with failure code
   }
 };
-
+// connectDB()
 export default connectDB;

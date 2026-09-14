@@ -3,7 +3,21 @@
 
 import multer from 'multer';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
 import { error } from '../utils/apiResponse.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+// Create absolute path to backend/uploads directory
+const uploadDir = path.join(__dirname, '..', 'uploads');
+
+// Ensure the directory exists
+try {
+  fs.mkdirSync(uploadDir, { recursive: true });
+} catch (err) {
+  console.error('Failed to create uploads directory:', err);
+}
 
 /**
  * Configure where and how to store uploaded files
@@ -11,7 +25,7 @@ import { error } from '../utils/apiResponse.js';
 const storage = multer.diskStorage({
   // Set the folder where files will be saved
   destination: (req, file, cb) => {
-    cb(null, 'uploads/');
+    cb(null, uploadDir);
   },
   // Generate a unique filename for each upload
   filename: (req, file, cb) => {

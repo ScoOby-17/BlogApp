@@ -2,11 +2,16 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import Comment from '../models/Comment.js';
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import { generateTokens } from '../utils/generateTokens.js';
 import { error, success } from '../utils/apiResponse.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadDir = path.join(__dirname, '..', 'uploads');
 
 /**
  * Stores login tokens in secure HTTP-only cookies for an administrator.
@@ -55,7 +60,7 @@ const removeUploadedImage = async (filename) => {
   }
 
   try {
-    await fs.unlink(path.join('uploads', filename));
+    await fs.unlink(path.join(uploadDir, filename));
   } catch (err) {
     if (err.code !== 'ENOENT') {
       console.error(`Unable to delete uploaded image ${filename}:`, err.message);

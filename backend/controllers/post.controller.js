@@ -3,9 +3,14 @@
 
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import Comment from '../models/Comment.js';
 import Post from '../models/Post.js';
 import { error, success } from '../utils/apiResponse.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const uploadDir = path.join(__dirname, '..', 'uploads');
 
 /**
  * Adds like and comment totals to plain post objects returned from MongoDB.
@@ -30,7 +35,7 @@ const removeUploadedImage = async (filename) => {
     return;
   }
 
-  const imagePath = path.join('uploads', filename);
+  const imagePath = path.join(uploadDir, filename);
 
   try {
     await fs.unlink(imagePath);
@@ -76,7 +81,11 @@ const getPosts = async (req, res) => {
       filter.category = category;
     }
 
-    console.log(`Fetching posts: page ${page}, limit ${limit}, category ${category || 'all'}`);
+    if (req.query.search) {
+      filter.title = { $regex: req.query.search, $options: 'i' };
+    }
+
+    console.log(`Fetching posts: page ${page}, limit ${limit}, category ${category || 'all'}, search: ${req.query.search || 'none'}`);
 
     const posts = await Post.find(filter)
       .sort({ createdAt: -1 })

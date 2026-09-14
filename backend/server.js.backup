@@ -1,19 +1,12 @@
 // This file starts the Express API server, connects to MongoDB, configures middleware,
 // and registers every API route.
 
-import { config } from 'dotenv';
-import { fileURLToPath } from 'url';
-import path from 'path';
-
-// sabse pehle .env load karo
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-config({ path: path.join(__dirname, '.env') });
-
-// ab baaki imports
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import connectDB from './config/db.js';
 import errorHandler from './middlewares/error.middleware.js';
 import adminRoutes from './routes/admin.routes.js';
@@ -36,10 +29,11 @@ const configureMiddleware = () => {
   const clientUrl = process.env.CLIENT_URL || 'http://localhost:5173';
 
   // Allow the frontend to send cookies with cross-origin API requests.
-  app.use(cors({
-    origin: clientUrl,
-    credentials: true
-  }));
+  // app.use(cors({
+  //   origin: clientUrl,
+  //   credentials: true
+  // }));
+  app.use(cors());
 
   // Parse JSON, form submissions, and browser cookies before routes run.
   app.use(express.json());

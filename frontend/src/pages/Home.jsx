@@ -35,7 +35,7 @@ const Home = () => {
         <section className="intro-section">
           <div className="intro-content">
             <div className="intro-logo">
-              <span className="logo-icon">✦</span>
+              <span className="logo-icon"></span>
               <span className="logo-text">BlogApp</span>
             </div>
             <h1 className="intro-title">

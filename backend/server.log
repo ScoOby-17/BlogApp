@@ -1,0 +1,33 @@
+Starting the Blog API server...
+- MongoDB Connected: localhost
+- Server is running on port 5000
+- Health check: http://localhost:5000/api/health
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Registering a new user account for test@example.com
+Login attempt received for test@example.com
+Login failed: incorrect password for test@example.com
+Registering a new user account for john@example.com
+User account created successfully: 6aa677e0de141a80310dbf7d
+Login attempt received for john@example.com
+User logged in successfully: 6aa677e0de141a80310dbf7d
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching post: 6aa58d7b334c24193adea46c
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all

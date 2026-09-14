@@ -10,7 +10,7 @@
  * @param {Function} next - Express next function
  */
 const errorHandler = (err, req, res, next) => {
-  console.error('❌ Error:', err);
+  console.error(' Error:', err);
 
   // Handle Mongoose validation errors (missing required fields, etc.)
   if (err.name === 'ValidationError') {

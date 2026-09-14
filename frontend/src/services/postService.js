@@ -1,9 +1,14 @@
 import api from './api';
 
 export const postService = {
-  getPosts: async (page = 1, limit = 9, category = 'all') => {
+  getPosts: async (page = 1, limit = 9, category = 'all', search = '') => {
     const response = await api.get('/posts', {
-      params: { page, limit, category: category === 'all' ? undefined : category }
+      params: {
+        page,
+        limit,
+        category: category === 'all' ? undefined : category,
+        search: search || undefined
+      }
     });
     return response.data;
   },

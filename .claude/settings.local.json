@@ -6,7 +6,10 @@
       "Bash(taskkill *)",
       "Bash(powershell -command \"& {Get-Process -Id \\(Get-NetTCPConnection -LocalPort 5000\\).OwningProcess | Stop-Process -Force}\")",
       "Bash(npm run *)",
-      "Bash(curl *)"
+      "Bash(curl *)",
+      "Bash(xargs python remove_emojis.py)",
+      "Bash(node *)",
+      "Bash(npm test *)"
     ]
   }
 }

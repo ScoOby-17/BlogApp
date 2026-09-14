@@ -29,12 +29,12 @@ const seedDefaultAdmin = async () => {
     existingAdmin.role = DEFAULT_ADMIN.role;
     await existingAdmin.save();
 
-    console.log('✅ Default administrator already existed and was updated.');
+    console.log(' Default administrator already existed and was updated.');
     return;
   }
 
   await User.create(DEFAULT_ADMIN);
-  console.log('✅ Default administrator created successfully.');
+  console.log(' Default administrator created successfully.');
 };
 
 /**
@@ -50,7 +50,7 @@ const runSeed = async () => {
     console.log(`Admin ID: ${DEFAULT_ADMIN.adminId}`);
     console.log(`Password: ${DEFAULT_ADMIN.password}`);
   } catch (err) {
-    console.error('❌ Default administrator seed failed:', err.message);
+    console.error(' Default administrator seed failed:', err.message);
     process.exitCode = 1;
   } finally {
     await mongoose.connection.close();

@@ -1,0 +1,362 @@
+
+> blog-backend@1.0.0 dev
+> nodemon server.js
+
+[33m[nodemon] 3.1.14[39m
+[33m[nodemon] to restart at any time, enter `rs`[39m
+[33m[nodemon] watching path(s): *.*[39m
+[33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+- MongoDB Connected: localhost
+- Server is running on port 5002
+- Health check: http://localhost:5002/api/health
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category other
+Fetching posts: page 1, limit 9, category other
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, categ[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js:78:7)
+    at process.processTicksAndRejections (node:internal/process/task_[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::50node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\Blo[31m[nodemon] app crashFetching posts: p[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js:78:7)
+    at pro[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js Server is running on port 5002
+ Health check: http://localhost:5002/api/health
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+  port: 5002
+}
+
+Node.js v22.17.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+g API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js:78:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v22.17.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+rapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 6, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category other
+Fetching posts: page 1, limit 9, category other
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category place
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category food
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category all
+Fetching posts: page 1, limit 9, category tech
+Fetching posts: page 1, limit 9, category tech
+Fetching post: 6aa58d7b334c24193adea46c
+Fetching post: 6aa58d7b334c24193adea46c
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+ Error: C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\sbcs-data-generated.js:118
+    "chars": "
+             ^^^^^^
+
+SyntaxError: Invalid or unexpected token
+    at wrapSafe (node:internal/modules/cjs/loader:1662:18)
+    at Module._compile (node:internal/modules/cjs/loader:1704:20)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+    at Module.require (node:internal/modules/cjs/loader:1487:12)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (C:\CodeS\BlogApp\backend\node_modules\iconv-lite\encodings\index.js:11:5) {
+  expose: true,
+  statusCode: 400,
+  status: 400
+}
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js:78:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v22.17.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m
+[32m[nodemon] restarting due to changes...[39m
+[32m[nodemon] starting `node server.js`[39m
+Starting the Blog API server...
+ MongoDB Connected: localhost
+node:events:496
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen EADDRINUSE: address already in use :::5002
+    at Server.setupListenHandle [as _listen2] (node:net:1940:16)
+    at listenInCluster (node:net:1997:12)
+    at Server.listen (node:net:2102:7)
+    at Function.listen (C:\CodeS\BlogApp\backend\node_modules\express\lib\application.js:635:24)
+    at startServer (file:///C:/CodeS/BlogApp/backend/server.js:78:7)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1976:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'EADDRINUSE',
+  errno: -4091,
+  syscall: 'listen',
+  address: '::',
+  port: 5002
+}
+
+Node.js v22.17.0
+[31m[nodemon] app crashed - waiting for file changes before starting...[39m

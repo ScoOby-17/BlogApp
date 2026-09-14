@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Brand Section */}
           <div className="footer-brand">
             <div className="footer-logo">
-              <span className="logo-icon">✦</span>
+              <span className="logo-icon"></span>
               <span className="logo-text">BlogApp</span>
             </div>
             <p className="footer-tagline">
@@ -45,8 +45,8 @@ const Footer = () => {
           <div className="footer-section">
             <h3 className="footer-section-title">Contact</h3>
             <ul className="footer-contact">
-              <li><span>📧</span> hello@blogverse.com</li>
-              <li><span>📍</span> Remote / Worldwide</li>
+              <li><span></span> hello@blogverse.com</li>
+              <li><span></span> Remote / Worldwide</li>
               <li>
                 <div className="footer-social">
                   <a href="#" className="social-link">Twitter</a>

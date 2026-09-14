@@ -5,32 +5,32 @@ A full-stack blog application built with the MERN stack (MongoDB, Express, React
 ## Features
 
 ### User Features
-- 🔐 User registration and login with JWT authentication (access + refresh tokens)
-- 📝 Create, read, update, delete blog posts (own posts only)
-- 🖼️ Upload cover images for blog posts
-- ✍️ Rich text editor for blog content (React Quill)
-- 💬 Comment on posts (multiple comments per user)
-- ❤️ Like/unlike posts
-- 📂 Filter posts by category (tech, food, place, other)
-- 📄 Pagination for post listings
-- 👤 User profile with own posts management
+-  User registration and login with JWT authentication (access + refresh tokens)
+-  Create, read, update, delete blog posts (own posts only)
+- ️ Upload cover images for blog posts
+- ️ Rich text editor for blog content (React Quill)
+-  Comment on posts (multiple comments per user)
+- ️ Like/unlike posts
+-  Filter posts by category (tech, food, place, other)
+-  Pagination for post listings
+-  User profile with own posts management
 
 ### Admin Features
-- 🔑 Separate admin login with admin ID
-- 👥 View and delete users
-- 📋 View and delete all posts
-- 🗑️ Delete any comment
+-  Separate admin login with admin ID
+-  View and delete users
+-  View and delete all posts
+- ️ Delete any comment
 
 ### Technical Features
-- 🌙 Modern dark theme with CSS variables
-- 📱 Fully responsive design
-- 🍪 httpOnly cookies for secure token storage
-- ✅ Input validation with Joi
-- 🔒 Password hashing with bcrypt
-- 📤 File uploads with Multer
-- 🎨 No CSS frameworks (plain CSS only)
-- 🔄 Automatic token refresh
-- 🎯 Protected routes on frontend and backend
+-  Modern dark theme with CSS variables
+-  Fully responsive design
+-  httpOnly cookies for secure token storage
+-  Input validation with Joi
+-  Password hashing with bcrypt
+-  File uploads with Multer
+-  No CSS frameworks (plain CSS only)
+-  Automatic token refresh
+-  Protected routes on frontend and backend
 
 ## Tech Stack
 
@@ -151,7 +151,7 @@ CLIENT_URL=http://localhost:5173
 NODE_ENV=development
 ```
 
-⚠️ **Important:** Change the JWT secrets to strong random strings in production!
+️ **Important:** Change the JWT secrets to strong random strings in production!
 
 #### Frontend (.env)
 
@@ -186,7 +186,7 @@ This creates an admin user with:
 - **Admin ID:** `admin001`
 - **Password:** `admin123`
 
-⚠️ **Change the admin password after first login!**
+️ **Change the admin password after first login!**
 
 ## Running the Application
 
@@ -332,4 +332,4 @@ MIT
 
 ## Author
 
-Built with ❤️ using the MERN stack
+Built with ️ using the MERN stack

@@ -22,7 +22,7 @@ const Navbar = () => {
     <nav className="navbar">
       <div className="container navbar-container">
         <Link to="/" className="navbar-logo" onClick={closeMenu}>
-          <span className="logo-icon">✦</span>
+          <span className="logo-icon"></span>
           <span className="logo-text">BlogApp</span>
         </Link>
 

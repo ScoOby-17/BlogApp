@@ -57,7 +57,7 @@ const AdminLogin = () => {
       <div className="admin-login-container">
         <div className="admin-login-card">
           <div className="admin-login-header">
-            <div className="admin-icon">🔐</div>
+            <div className="admin-icon"></div>
             <h1>Admin Login</h1>
             <p>Access the admin dashboard</p>
           </div>
