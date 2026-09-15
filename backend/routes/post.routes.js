@@ -1,4 +1,14 @@
-// This file defines public and protected routes for working with blog posts.
+// =============================================================================
+// post.routes.js — Routes for blog posts
+// =============================================================================
+// This file connects URLs to the post controller functions.
+// GET    /api/posts         — List posts (with pagination, filters, search)
+// GET    /api/posts/:id     — Get a single post by ID
+// POST   /api/posts         — Create a new post (requires login + image upload)
+// PUT    /api/posts/:id     — Update a post (requires login, author or admin only)
+// DELETE /api/posts/:id     — Delete a post (requires login, author or admin only)
+// POST   /api/posts/:id/like — Toggle like on a post (requires login)
+// =============================================================================
 
 import express from 'express';
 import {
@@ -11,35 +21,41 @@ import {
 } from '../controllers/post.controller.js';
 import auth from '../middlewares/auth.middleware.js';
 import { handleMulterError, upload } from '../middlewares/upload.middleware.js';
-import validate from '../middlewares/validate.middleware.js';
-import { createPostSchema, updatePostSchema } from '../validations/post.validation.js';
 
 const router = express.Router();
 
-// Public routes: anyone can browse posts and open an individual post.
+// --- Public routes (no login required) ---
+
+// List all posts with optional filtering and search
 router.get('/', getPosts);
+
+// Get a single post with its author and comments
 router.get('/:id', getPostById);
 
-// Protected routes: only signed-in users can create, change, or like posts.
+// --- Protected routes (login required) ---
+
+// Create a new post — first check auth, then handle file upload, then create
 router.post(
   '/',
   auth,
   upload.single('coverImage'),
   handleMulterError,
-  validate(createPostSchema),
   createPost
 );
 
+// Update a post — same middleware chain as create
 router.put(
   '/:id',
   auth,
   upload.single('coverImage'),
   handleMulterError,
-  validate(updatePostSchema),
   updatePost
 );
 
+// Delete a post
 router.delete('/:id', auth, deletePost);
+
+// Like or unlike a post
 router.post('/:id/like', auth, toggleLike);
 
 export default router;

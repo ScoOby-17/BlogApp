@@ -1,4 +1,12 @@
-// This file defines public admin login and protected administrator management routes.
+// =============================================================================
+// admin.routes.js — Routes for admin dashboard actions
+// =============================================================================
+// This file connects URLs to the admin controller functions.
+// POST   /api/admin/login      — Admin login with adminId and password
+// GET    /api/admin/users      — List all regular users (admin only)
+// DELETE /api/admin/users/:id  — Delete a user and their content (admin only)
+// GET    /api/admin/posts      — List all posts for moderation (admin only)
+// =============================================================================
 
 import express from 'express';
 import {
@@ -9,17 +17,21 @@ import {
 } from '../controllers/admin.controller.js';
 import admin from '../middlewares/admin.middleware.js';
 import auth from '../middlewares/auth.middleware.js';
-import validate from '../middlewares/validate.middleware.js';
-import { adminLoginSchema } from '../validations/auth.validation.js';
 
 const router = express.Router();
 
-// Public route: administrators sign in with an admin ID and password.
-router.post('/login', validate(adminLoginSchema), adminLogin);
+// Admin login (public — no auth needed, admins need to log in first!)
+router.post('/login', adminLogin);
 
-// Protected routes: require a valid login and the administrator role.
+// --- Protected routes (require login + admin role) ---
+
+// Get a list of all regular users
 router.get('/users', auth, admin, getAllUsers);
+
+// Delete a user and all their content
 router.delete('/users/:id', auth, admin, deleteUser);
+
+// Get all posts for moderation
 router.get('/posts', auth, admin, getAllPosts);
 
 export default router;

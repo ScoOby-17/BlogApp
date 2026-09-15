@@ -1,27 +1,28 @@
-// This middleware checks if the logged-in user is an admin
-// Used to protect admin-only routes (like deleting users or managing all posts)
+// =============================================================================
+// admin.middleware.js — Checks if the logged-in user is an admin
+// =============================================================================
+// This middleware must be used AFTER the auth middleware (which sets req.user).
+// It checks if the user's role is "admin". If not, it sends a 403 error.
+// =============================================================================
 
-import { error } from '../utils/apiResponse.js';
-
-/**
- * Middleware to verify the current user has admin role
- * Must be used AFTER the auth middleware (which sets req.user)
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- */
 const admin = (req, res, next) => {
-  // Check if user is logged in (auth middleware should have set req.user)
+  // 1. Make sure the user is logged in (auth middleware should have set req.user)
   if (!req.user) {
-    return error(res, 'Authentication required', 401);
+    return res.status(401).json({
+      success: false,
+      message: 'Authentication required'
+    });
   }
 
-  // Check if the user's role is 'admin'
+  // 2. Check if the user has the "admin" role
   if (req.user.role !== 'admin') {
-    return error(res, 'Access denied. Admin privileges required.', 403);
+    return res.status(403).json({
+      success: false,
+      message: 'Access denied. Admin privileges required.'
+    });
   }
 
-  // User is admin, allow them to proceed
+  // 3. User is an admin — let them continue
   next();
 };
 

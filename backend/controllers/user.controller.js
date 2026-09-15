@@ -1,4 +1,12 @@
-// This file contains endpoints for viewing the authenticated user's profile and posts.
+// =============================================================================
+// user.controller.js — Handles user profile viewing, updating, and deletion
+// =============================================================================
+// This file contains the logic for the logged-in user to:
+// - View their own profile
+// - View their own posts
+// - Update their name and/or avatar
+// - Delete their account and all associated content
+// =============================================================================
 
 import fs from 'fs/promises';
 import path from 'path';
@@ -6,131 +14,211 @@ import { fileURLToPath } from 'url';
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import Comment from '../models/Comment.js';
-import { error, success } from '../utils/apiResponse.js';
 
+// Set up __dirname for ES modules (needed to build file paths)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.join(__dirname, '..', 'uploads');
 
-const removeUploadedImage = async (filename) => {
-  if (!filename) return;
+// -----------------------------------------------------------------------------
+// Get the logged-in user's profile
+// -----------------------------------------------------------------------------
+export const getProfile = async (req, res) => {
   try {
-    await fs.unlink(path.join(uploadDir, filename));
-  } catch (err) {
-    if (err.code !== 'ENOENT') {
-      console.error(`Unable to delete uploaded image ${filename}:`, err.message);
-    }
-  }
-};
-
-/**
- * Adds like and comment totals to plain post objects for client-side display.
- * @param {Array<Object>} posts - Plain post objects returned from Mongoose
- * @returns {Array<Object>} Posts with likesCount and commentsCount properties
- */
-const addPostCounts = (posts) => {
-  return posts.map((post) => ({
-    ...post,
-    likesCount: post.likes ? post.likes.length : 0,
-    commentsCount: post.comments ? post.comments.length : 0
-  }));
-};
-
-/**
- * Returns the authenticated user's profile saved by the auth middleware.
- * @param {Object} req - Express request containing req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing the current user's safe profile
- */
-const getProfile = async (req, res) => {
-  try {
+    // 1. The auth middleware already found the user and put it in req.user
     console.log(`Fetching profile for user: ${req.user._id}`);
-    return success(res, { user: req.user }, 'Profile fetched successfully');
-  } catch (err) {
-    console.error('Fetching profile failed:', err.message);
-    return error(res, err.message, 500);
+
+    // 2. Send the user's profile back
+    return res.status(200).json({
+      success: true,
+      message: 'Profile fetched successfully',
+      data: { user: req.user }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Returns all posts authored by the currently authenticated user.
- * @param {Object} req - Express request containing req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing the user's posts and their counts
- */
-const getUserPosts = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Get all posts written by the logged-in user
+// -----------------------------------------------------------------------------
+export const getUserPosts = async (req, res) => {
   try {
-    console.log(`Fetching posts for user: ${req.user._id}`);
+    // 1. Get the logged-in user's ID
+    const userId = req.user._id;
+    console.log(`Fetching posts for user: ${userId}`);
 
-    const posts = await Post.find({ author: req.user._id })
+    // 2. Find all posts by this user
+    const posts = await Post.find({ author: userId })
       .sort({ createdAt: -1 })
       .populate('author', 'name email avatar')
       .lean();
 
-    const postsWithCounts = addPostCounts(posts);
+    // 3. Add likesCount and commentsCount to each post
+    const postsWithCounts = posts.map((post) => {
+      return {
+        ...post,
+        likesCount: post.likes ? post.likes.length : 0,
+        commentsCount: post.comments ? post.comments.length : 0
+      };
+    });
 
-    return success(res, { posts: postsWithCounts }, 'User posts fetched successfully');
-  } catch (err) {
-    console.error('Fetching user posts failed:', err.message);
-    return error(res, err.message, 500);
+    // 4. Send the posts back
+    return res.status(200).json({
+      success: true,
+      message: 'User posts fetched successfully',
+      data: { posts: postsWithCounts }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-const updateProfile = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Update the logged-in user's profile (name and/or avatar)
+// -----------------------------------------------------------------------------
+export const updateProfile = async (req, res) => {
   try {
+    // 1. Find the user in the database (we need the full document to update it)
     const user = await User.findById(req.user._id);
-    if (!user) return error(res, 'User not found', 404);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
+    }
 
+    // 2. If a new name was provided, update it
     if (req.body.name) {
       user.name = req.body.name;
     }
 
+    // 3. If a new avatar image was uploaded, replace the old one
     if (req.file) {
+      // Delete the old avatar image if one exists
       if (user.avatar) {
-        await removeUploadedImage(user.avatar);
+        try {
+          await fs.unlink(path.join(uploadDir, user.avatar));
+        } catch (unlinkError) {
+          if (unlinkError.code !== 'ENOENT') {
+            console.error(`Unable to delete old avatar ${user.avatar}:`, unlinkError.message);
+          }
+        }
       }
+      // Save the new avatar filename
       user.avatar = req.file.filename;
     }
 
+    // 4. Save the updated user to the database
     await user.save();
-    return success(res, { user: user.toJSON() }, 'Profile updated successfully');
-  } catch (err) {
+
+    // 5. Build the user data to send back (remove password for security)
+    const userResponse = user.toObject();
+    delete userResponse.password;
+
+    // 6. Send the updated profile back
+    return res.status(200).json({
+      success: true,
+      message: 'Profile updated successfully',
+      data: { user: userResponse }
+    });
+
+  } catch (error) {
+    // If saving failed after uploading a new avatar, clean up the unused file
     if (req.file) {
-      await removeUploadedImage(req.file.filename);
+      try {
+        await fs.unlink(path.join(uploadDir, req.file.filename));
+      } catch (unlinkError) {
+        if (unlinkError.code !== 'ENOENT') {
+          console.error(`Unable to delete uploaded avatar ${req.file.filename}:`, unlinkError.message);
+        }
+      }
     }
-    console.error('Updating profile failed:', err.message);
-    return error(res, err.message, 500);
+
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-const deleteProfile = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Delete the logged-in user's account and all their content
+// -----------------------------------------------------------------------------
+export const deleteProfile = async (req, res) => {
   try {
+    // 1. Find the user in the database
     const user = await User.findById(req.user._id);
-    if (!user) return error(res, 'User not found', 404);
-
-    const userPosts = await Post.find({ author: user._id });
-    for (const post of userPosts) {
-      await removeUploadedImage(post.coverImage);
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found'
+      });
     }
 
+    // 2. Find all posts by this user
+    const userPosts = await Post.find({ author: user._id });
+
+    // 3. Delete each post's cover image from the uploads folder
+    for (const post of userPosts) {
+      if (post.coverImage) {
+        try {
+          await fs.unlink(path.join(uploadDir, post.coverImage));
+        } catch (unlinkError) {
+          if (unlinkError.code !== 'ENOENT') {
+            console.error(`Unable to delete uploaded image ${post.coverImage}:`, unlinkError.message);
+          }
+        }
+      }
+    }
+
+    // 4. Delete all comments by this user
     await Comment.deleteMany({ author: user._id });
+
+    // 5. Delete all posts by this user
     await Post.deleteMany({ author: user._id });
 
+    // 6. Delete the user's avatar image if they have one
     if (user.avatar) {
-      await removeUploadedImage(user.avatar);
+      try {
+        await fs.unlink(path.join(uploadDir, user.avatar));
+      } catch (unlinkError) {
+        if (unlinkError.code !== 'ENOENT') {
+          console.error(`Unable to delete avatar ${user.avatar}:`, unlinkError.message);
+        }
+      }
     }
 
+    // 7. Delete the user account
     await User.findByIdAndDelete(req.user._id);
 
-    // Clear auth cookies
+    // 8. Clear the authentication cookies so the browser is logged out
     res.clearCookie('accessToken');
     res.clearCookie('refreshToken');
 
-    return success(res, null, 'Profile and all associated content deleted successfully');
-  } catch (err) {
-    console.error('Deleting profile failed:', err.message);
-    return error(res, err.message, 500);
+    // 9. Send success response
+    return res.status(200).json({
+      success: true,
+      message: 'Profile and all associated content deleted successfully',
+      data: null
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
-
-export { getProfile, getUserPosts, updateProfile, deleteProfile };

@@ -1,125 +1,107 @@
-// This file contains the business logic for listing, reading, creating, updating,
-// deleting, and liking blog posts.
+// =============================================================================
+// post.controller.js — Handles creating, reading, updating, deleting, and liking posts
+// =============================================================================
+// This file contains all the business logic for blog posts. It handles:
+// - Listing posts with pagination, category filtering, and search
+// - Getting a single post with its author and comments
+// - Creating a new post with a cover image
+// - Updating an existing post (only by the author or admin)
+// - Deleting a post and its associated comments/image
+// - Toggling likes on a post
+// =============================================================================
 
 import fs from 'fs/promises';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import Comment from '../models/Comment.js';
 import Post from '../models/Post.js';
-import { error, success } from '../utils/apiResponse.js';
+import { createPostSchema, updatePostSchema } from '../validations/post.validation.js';
 
+// Set up __dirname for ES modules (needed to build file paths)
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const uploadDir = path.join(__dirname, '..', 'uploads');
 
-/**
- * Adds like and comment totals to plain post objects returned from MongoDB.
- * @param {Array<Object>} posts - Plain post objects returned by a lean query
- * @returns {Array<Object>} Posts with likesCount and commentsCount properties
- */
-const addPostCounts = (posts) => {
-  return posts.map((post) => ({
-    ...post,
-    likesCount: post.likes ? post.likes.length : 0,
-    commentsCount: post.comments ? post.comments.length : 0
-  }));
-};
-
-/**
- * Safely removes an uploaded image file when it exists.
- * @param {String} filename - The uploaded image filename to remove
- * @returns {Promise<void>} Resolves even when the file has already been removed
- */
-const removeUploadedImage = async (filename) => {
-  if (!filename) {
-    return;
-  }
-
-  const imagePath = path.join(uploadDir, filename);
-
+// -----------------------------------------------------------------------------
+// Get a paginated list of posts, with optional category filter and search
+// -----------------------------------------------------------------------------
+export const getPosts = async (req, res) => {
   try {
-    await fs.unlink(imagePath);
-    console.log(`Deleted uploaded image: ${filename}`);
-  } catch (err) {
-    // A missing image should not prevent its post operation from finishing.
-    if (err.code !== 'ENOENT') {
-      console.error(`Unable to delete uploaded image ${filename}:`, err.message);
-    }
-  }
-};
-
-/**
- * Checks whether a requester owns a post or is allowed to manage it as an admin.
- * @param {Object} post - Post document being changed
- * @param {Object} user - Authenticated user from the request
- * @returns {Boolean} True when the user can modify the post
- */
-const canManagePost = (post, user) => {
-  const isPostAuthor = post.author.toString() === user._id.toString();
-  const isAdmin = user.role === 'admin';
-
-  return isPostAuthor || isAdmin;
-};
-
-/**
- * Gets a paginated list of posts, optionally filtered by category.
- * @param {Object} req - Express request containing page, limit, and category query values
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing page details and posts
- */
-const getPosts = async (req, res) => {
-  try {
-    const requestedPage = Number.parseInt(req.query.page, 10) || 1;
-    const requestedLimit = Number.parseInt(req.query.limit, 10) || 9;
+    // 1. Get pagination values from the query string (default: page 1, 9 posts per page)
+    const requestedPage = parseInt(req.query.page, 10) || 1;
+    const requestedLimit = parseInt(req.query.limit, 10) || 9;
     const page = Math.max(requestedPage, 1);
     const limit = Math.max(requestedLimit, 1);
-    const category = req.query.category;
     const skip = (page - 1) * limit;
+
+    // 2. Build the filter object for the database query
     const filter = {};
 
+    // 3. If a category was specified (and it's not "all"), filter by it
+    const category = req.query.category;
     if (category && category !== 'all') {
       filter.category = category;
     }
 
+    // 4. If a search term was provided, search post titles (case-insensitive)
     if (req.query.search) {
       filter.title = { $regex: req.query.search, $options: 'i' };
     }
 
     console.log(`Fetching posts: page ${page}, limit ${limit}, category ${category || 'all'}, search: ${req.query.search || 'none'}`);
 
+    // 5. Query the database for posts matching the filter
     const posts = await Post.find(filter)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('author', 'name email avatar')
-      .lean();
+      .sort({ createdAt: -1 })              // newest posts first
+      .skip(skip)                            // skip posts from previous pages
+      .limit(limit)                          // only return the requested number
+      .populate('author', 'name email avatar') // include author's name, email, avatar
+      .lean();                               // return plain JS objects (faster)
 
+    // 6. Count total matching posts (for calculating total pages)
     const totalPosts = await Post.countDocuments(filter);
-    const postsWithCounts = addPostCounts(posts);
 
-    return success(res, {
-      posts: postsWithCounts,
-      currentPage: page,
-      totalPages: Math.ceil(totalPosts / limit),
-      totalPosts
-    }, 'Posts fetched successfully');
-  } catch (err) {
-    console.error('Fetching posts failed:', err.message);
-    return error(res, err.message, 500);
+    // 7. Add likesCount and commentsCount to each post
+    const postsWithCounts = posts.map((post) => {
+      return {
+        ...post,
+        likesCount: post.likes ? post.likes.length : 0,
+        commentsCount: post.comments ? post.comments.length : 0
+      };
+    });
+
+    // 8. Send the posts back to the frontend
+    return res.status(200).json({
+      success: true,
+      message: 'Posts fetched successfully',
+      data: {
+        posts: postsWithCounts,
+        currentPage: page,
+        totalPages: Math.ceil(totalPosts / limit),
+        totalPosts
+      }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Gets one post by its ID, including its author and comments.
- * @param {Object} req - Express request containing the post ID and optional req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing the post or an error
- */
-const getPostById = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Get a single post by its ID, including author info and comments
+// -----------------------------------------------------------------------------
+export const getPostById = async (req, res) => {
   try {
-    console.log(`Fetching post: ${req.params.id}`);
+    // 1. Get the post ID from the URL
+    const postId = req.params.id;
+    console.log(`Fetching post: ${postId}`);
 
-    const post = await Post.findById(req.params.id)
+    // 2. Find the post and include the author's info and all comments
+    const post = await Post.findById(postId)
       .populate('author', 'name email avatar')
       .populate({
         path: 'comments',
@@ -127,206 +109,354 @@ const getPostById = async (req, res) => {
           path: 'author',
           select: 'name avatar'
         },
-        options: { sort: { createdAt: -1 } }
+        options: { sort: { createdAt: -1 } }   // newest comments first
       });
 
+    // 3. If no post was found, return a 404 error
     if (!post) {
-      return error(res, 'Post not found', 404);
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
     }
 
+    // 4. Convert the post to a plain object so we can add extra fields
     const postData = post.toObject();
     postData.likesCount = post.likes.length;
     postData.commentsCount = post.comments.length;
 
-    // The route is public, so only calculate the current user's like status when present.
+    // 5. If a user is logged in, check if they have liked this post
+    //    (This route is public, so req.user might not exist)
     if (req.user) {
+      const userId = req.user._id.toString();
       postData.isLikedByUser = post.likes.some((likeId) => {
-        return likeId.toString() === req.user._id.toString();
+        return likeId.toString() === userId;
       });
     }
 
-    return success(res, { post: postData }, 'Post fetched successfully');
-  } catch (err) {
-    console.error('Fetching post failed:', err.message);
-    return error(res, err.message, 500);
+    // 6. Send the post data back to the frontend
+    return res.status(200).json({
+      success: true,
+      message: 'Post fetched successfully',
+      data: { post: postData }
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Creates a post using the authenticated user as its author.
- * @param {Object} req - Express request containing post fields, cover image, and req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing the new post or an error
- */
-const createPost = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Create a new blog post (requires login and a cover image upload)
+// -----------------------------------------------------------------------------
+export const createPost = async (req, res) => {
   try {
-    const { title, content, category } = req.body;
+    // 1. Validate the incoming data using our Joi schema
+    const { error } = createPostSchema.validate(req.body);
 
-    if (!req.file) {
-      return error(res, 'Cover image is required', 400);
+    // 2. If validation fails, stop here and send back the error message
+    if (error) {
+      // If a file was uploaded but validation failed, delete it so it doesn't pile up
+      if (req.file) {
+        try {
+          await fs.unlink(path.join(uploadDir, req.file.filename));
+        } catch (unlinkError) {
+          if (unlinkError.code !== 'ENOENT') {
+            console.error(`Unable to delete uploaded image ${req.file.filename}:`, unlinkError.message);
+          }
+        }
+      }
+      return res.status(400).json({
+        success: false,
+        message: error.details[0].message
+      });
     }
 
-    console.log(`Creating post for user: ${req.user._id}`);
+    // 3. Get the post details sent by the frontend
+    const { title, content, category } = req.body;
 
+    // 4. Make sure a cover image was uploaded
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cover image is required'
+      });
+    }
+
+    // 5. Get the logged-in user's ID (set by the auth middleware)
+    const userId = req.user._id;
+    console.log(`Creating post for user: ${userId}`);
+
+    // 6. Create the post in the database
     const post = await Post.create({
       title,
       content,
       category,
-      coverImage: req.file.filename,
-      author: req.user._id
+      coverImage: req.file.filename,  // the filename saved by multer
+      author: userId
     });
 
+    // 7. Fetch the post again with the author info populated
     const populatedPost = await Post.findById(post._id)
       .populate('author', 'name email avatar');
 
+    // 8. Send the new post back to the frontend
     console.log(`Post created successfully: ${post._id}`);
-    return success(res, { post: populatedPost }, 'Post created successfully', 201);
-  } catch (err) {
-    // Avoid leaving an unused upload behind when the database operation fails.
+    return res.status(201).json({
+      success: true,
+      message: 'Post created successfully',
+      data: { post: populatedPost }
+    });
+
+  } catch (error) {
+    // If the database operation failed, delete the uploaded image so it doesn't pile up
     if (req.file) {
-      await removeUploadedImage(req.file.filename);
+      try {
+        await fs.unlink(path.join(uploadDir, req.file.filename));
+      } catch (unlinkError) {
+        if (unlinkError.code !== 'ENOENT') {
+          console.error(`Unable to delete uploaded image ${req.file.filename}:`, unlinkError.message);
+        }
+      }
     }
 
-    console.error('Creating post failed:', err.message);
-    return error(res, err.message, 500);
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Updates a post when the requester is its author or an admin.
- * @param {Object} req - Express request containing post ID, editable fields, image, and req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response containing the updated post or an error
- */
-const updatePost = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Update an existing post (only the author or an admin can do this)
+// -----------------------------------------------------------------------------
+export const updatePost = async (req, res) => {
   try {
+    // 1. Validate the incoming data using our Joi schema
+    const { error } = updatePostSchema.validate(req.body);
+
+    // 2. If validation fails, stop here and send back the error message
+    if (error) {
+      // If a file was uploaded but validation failed, delete it
+      if (req.file) {
+        try {
+          await fs.unlink(path.join(uploadDir, req.file.filename));
+        } catch (unlinkError) {
+          if (unlinkError.code !== 'ENOENT') {
+            console.error(`Unable to delete uploaded image ${req.file.filename}:`, unlinkError.message);
+          }
+        }
+      }
+      return res.status(400).json({
+        success: false,
+        message: error.details[0].message
+      });
+    }
+
+    // 3. Find the post by its ID
     const post = await Post.findById(req.params.id);
-
     if (!post) {
-      return error(res, 'Post not found', 404);
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
     }
 
-    if (!canManagePost(post, req.user)) {
-      return error(res, 'You are not authorized to update this post', 403);
+    // 4. Check if the logged-in user is the author of this post or an admin
+    const isPostAuthor = post.author.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isPostAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to update this post'
+      });
     }
 
+    // 5. Update only the fields that were sent by the frontend
     const { title, content, category } = req.body;
 
     if (title) {
       post.title = title;
     }
-
     if (content) {
       post.content = content;
     }
-
     if (category) {
       post.category = category;
     }
 
+    // 6. If a new cover image was uploaded, delete the old one and save the new filename
     if (req.file) {
-      // Delete the old image only after the new one has been accepted by Multer.
-      await removeUploadedImage(post.coverImage);
+      // Delete the old cover image from the uploads folder
+      if (post.coverImage) {
+        try {
+          await fs.unlink(path.join(uploadDir, post.coverImage));
+          console.log(`Deleted old cover image: ${post.coverImage}`);
+        } catch (unlinkError) {
+          if (unlinkError.code !== 'ENOENT') {
+            console.error(`Unable to delete old cover image ${post.coverImage}:`, unlinkError.message);
+          }
+        }
+      }
       post.coverImage = req.file.filename;
     }
 
+    // 7. Save the updated post to the database
     await post.save();
 
+    // 8. Fetch the updated post with author info populated
     const updatedPost = await Post.findById(post._id)
       .populate('author', 'name email avatar');
 
+    // 9. Send the updated post back to the frontend
     console.log(`Post updated successfully: ${post._id}`);
-    return success(res, { post: updatedPost }, 'Post updated successfully');
-  } catch (err) {
-    // If saving failed after a replacement upload, delete that unused new file.
+    return res.status(200).json({
+      success: true,
+      message: 'Post updated successfully',
+      data: { post: updatedPost }
+    });
+
+  } catch (error) {
+    // If saving failed after uploading a new image, clean up that unused file
     if (req.file) {
-      await removeUploadedImage(req.file.filename);
+      try {
+        await fs.unlink(path.join(uploadDir, req.file.filename));
+      } catch (unlinkError) {
+        if (unlinkError.code !== 'ENOENT') {
+          console.error(`Unable to delete uploaded image ${req.file.filename}:`, unlinkError.message);
+        }
+      }
     }
 
-    console.error('Updating post failed:', err.message);
-    return error(res, err.message, 500);
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Deletes a post, its cover image, and all comments associated with it.
- * @param {Object} req - Express request containing post ID and req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response confirming deletion or describing an error
- */
-const deletePost = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Delete a post, its cover image, and all its comments
+// -----------------------------------------------------------------------------
+export const deletePost = async (req, res) => {
   try {
+    // 1. Find the post by its ID
     const post = await Post.findById(req.params.id);
-
     if (!post) {
-      return error(res, 'Post not found', 404);
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
     }
 
-    if (!canManagePost(post, req.user)) {
-      return error(res, 'You are not authorized to delete this post', 403);
+    // 2. Check if the logged-in user is the author or an admin
+    const isPostAuthor = post.author.toString() === req.user._id.toString();
+    const isAdmin = req.user.role === 'admin';
+    if (!isPostAuthor && !isAdmin) {
+      return res.status(403).json({
+        success: false,
+        message: 'You are not authorized to delete this post'
+      });
     }
 
-    await removeUploadedImage(post.coverImage);
+    // 3. Delete the cover image file from the uploads folder
+    if (post.coverImage) {
+      try {
+        await fs.unlink(path.join(uploadDir, post.coverImage));
+        console.log(`Deleted uploaded image: ${post.coverImage}`);
+      } catch (unlinkError) {
+        if (unlinkError.code !== 'ENOENT') {
+          console.error(`Unable to delete uploaded image ${post.coverImage}:`, unlinkError.message);
+        }
+      }
+    }
+
+    // 4. Delete all comments that belong to this post
     await Comment.deleteMany({ post: post._id });
+
+    // 5. Delete the post itself
     await Post.findByIdAndDelete(req.params.id);
 
+    // 6. Send success response
     console.log(`Post deleted successfully: ${req.params.id}`);
-    return success(res, null, 'Post deleted successfully');
-  } catch (err) {
-    console.error('Deleting post failed:', err.message);
-    return error(res, err.message, 500);
+    return res.status(200).json({
+      success: true,
+      message: 'Post deleted successfully',
+      data: null
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
   }
 };
 
-/**
- * Adds or removes the authenticated user's like on a post.
- * @param {Object} req - Express request containing post ID and req.user
- * @param {Object} res - Express response object
- * @returns {Object} JSON response with the new like state and total
- */
-const toggleLike = async (req, res) => {
+// -----------------------------------------------------------------------------
+// Toggle like on a post (like it if not liked, unlike it if already liked)
+// -----------------------------------------------------------------------------
+export const toggleLike = async (req, res) => {
   try {
+    // 1. Find the post by its ID
     const post = await Post.findById(req.params.id);
-
     if (!post) {
-      return error(res, 'Post not found', 404);
+      return res.status(404).json({
+        success: false,
+        message: 'Post not found'
+      });
     }
 
+    // 2. Get the logged-in user's ID as a string (for comparison)
     const userId = req.user._id.toString();
+
+    // 3. Check if the user has already liked this post
     const likeIndex = post.likes.findIndex((likeId) => {
       return likeId.toString() === userId;
     });
 
+    // 4. If already liked, remove the like (unlike)
     if (likeIndex > -1) {
       post.likes.splice(likeIndex, 1);
       await post.save();
       console.log(`Post unliked: ${post._id} by user ${req.user._id}`);
 
-      return success(res, {
-        isLiked: false,
-        likesCount: post.likes.length
-      }, 'Post unliked');
+      return res.status(200).json({
+        success: true,
+        message: 'Post unliked',
+        data: {
+          isLiked: false,
+          likesCount: post.likes.length
+        }
+      });
     }
 
+    // 5. If not liked yet, add the like
     post.likes.push(req.user._id);
     await post.save();
     console.log(`Post liked: ${post._id} by user ${req.user._id}`);
 
-    return success(res, {
-      isLiked: true,
-      likesCount: post.likes.length
-    }, 'Post liked');
-  } catch (err) {
-    console.error('Toggling like failed:', err.message);
-    return error(res, err.message, 500);
-  }
-};
+    return res.status(200).json({
+      success: true,
+      message: 'Post liked',
+      data: {
+        isLiked: true,
+        likesCount: post.likes.length
+      }
+    });
 
-export {
-  getPosts,
-  getPostById,
-  createPost,
-  updatePost,
-  deletePost,
-  toggleLike
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 };

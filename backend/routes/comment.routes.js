@@ -1,17 +1,21 @@
-// This file defines protected routes for creating and deleting post comments.
+// =============================================================================
+// comment.routes.js — Routes for post comments
+// =============================================================================
+// This file connects URLs to the comment controller functions.
+// POST   /api/posts/:id/comments — Add a comment to a post (requires login)
+// DELETE /api/comments/:id       — Delete a comment (requires login, author or admin)
+// =============================================================================
 
 import express from 'express';
 import { createComment, deleteComment } from '../controllers/comment.controller.js';
 import auth from '../middlewares/auth.middleware.js';
-import validate from '../middlewares/validate.middleware.js';
-import { createCommentSchema } from '../validations/comment.validation.js';
 
 const router = express.Router();
 
-// Add a comment to the post identified by :id.
-router.post('/posts/:id/comments', auth, validate(createCommentSchema), createComment);
+// Add a comment to the post with the given ID
+router.post('/posts/:id/comments', auth, createComment);
 
-// Delete the comment identified by :id when the requester owns it or is an admin.
+// Delete a comment (only the comment author or an admin can do this)
 router.delete('/comments/:id', auth, deleteComment);
 
 export default router;

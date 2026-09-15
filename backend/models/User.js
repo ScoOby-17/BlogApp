@@ -1,8 +1,12 @@
-// This file defines the User model - represents users (and admins) in the database
-// Handles password hashing automatically before saving to keep passwords secure
+// =============================================================================
+// User.js — Defines the shape of a User in the database
+// =============================================================================
+// This file only defines WHAT a user looks like (fields, types, defaults).
+// It does NOT contain any logic (no password hashing, no methods).
+// All logic (hashing, comparing passwords, etc.) is done in the controllers.
+// =============================================================================
 
 import mongoose from 'mongoose';
-import bcrypt from 'bcrypt';
 
 const userSchema = new mongoose.Schema({
   name: {
@@ -15,19 +19,19 @@ const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Email is required'],
-    unique: true, // No two users can have the same email
-    lowercase: true, // Store emails in lowercase
+    unique: true,           // No two users can have the same email
+    lowercase: true,        // Store emails in lowercase
     trim: true,
     match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
   },
   password: {
     type: String,
     required: [true, 'Password is required'],
-    minlength: 6 // Will be hashed, so length will be much longer in DB
+    minlength: 6
   },
   avatar: {
     type: String,
-    default: null // Optional profile picture
+    default: null            // Optional profile picture
   },
   role: {
     type: String,
@@ -37,47 +41,10 @@ const userSchema = new mongoose.Schema({
   adminId: {
     type: String,
     unique: true,
-    sparse: true // Only admins have this field (allows multiple null values)
+    sparse: true             // Only admins have this field (allows multiple null values)
   }
 }, {
-  timestamps: true
+  timestamps: true           // Automatically adds createdAt and updatedAt fields
 });
-
-/**
- * Middleware that runs before saving a user
- * Hashes the password if it was modified (on signup or password change)
- */
-userSchema.pre('save', async function(next) {
-  // Only hash the password if it's new or has been changed
-  if (!this.isModified('password')) return next();
-
-  try {
-    // Generate a salt (random string) and hash the password
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
-
-/**
- * Compares a plain text password with the hashed password in the database
- * @param {String} candidatePassword - The password to check
- * @returns {Boolean} True if password matches, false otherwise
- */
-userSchema.methods.comparePassword = async function(candidatePassword) {
-  return await bcrypt.compare(candidatePassword, this.password);
-};
-
-/**
- * Removes the password field when converting user to JSON
- * This prevents accidentally sending passwords in API responses
- */
-userSchema.methods.toJSON = function() {
-  const userObject = this.toObject();
-  delete userObject.password; // Remove password before sending to client
-  return userObject;
-};
 
 export default mongoose.model('User', userSchema);

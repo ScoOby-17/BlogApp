@@ -1,23 +1,28 @@
-// This file defines public routes for registering, logging in, logging out,
-// and refreshing user authentication tokens.
+// =============================================================================
+// auth.routes.js — Routes for user authentication
+// =============================================================================
+// This file connects URLs to the auth controller functions.
+// POST /api/auth/register  — Create a new user account
+// POST /api/auth/login     — Log in with email and password
+// POST /api/auth/logout    — Log out (clear cookies)
+// POST /api/auth/refresh   — Get a new access token using refresh token
+// =============================================================================
 
 import express from 'express';
 import { login, logout, refresh, register } from '../controllers/auth.controller.js';
-import validate from '../middlewares/validate.middleware.js';
-import { loginSchema, registerSchema } from '../validations/auth.validation.js';
 
 const router = express.Router();
 
-// Create a new standard user account.
-router.post('/register', validate(registerSchema), register);
+// Create a new standard user account
+router.post('/register', register);
 
-// Authenticate a standard user using email and password.
-router.post('/login', validate(loginSchema), login);
+// Log in with email and password
+router.post('/login', login);
 
-// Remove the current user's authentication cookies.
+// Log out — removes authentication cookies
 router.post('/logout', logout);
 
-// Replace an expired access token using a valid refresh-token cookie.
+// Get a new access token using the refresh token cookie
 router.post('/refresh', refresh);
 
 export default router;

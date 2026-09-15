@@ -1,41 +1,34 @@
-// This is the global error handler middleware
-// Catches all errors that happen during request processing and sends proper responses
+// =============================================================================
+// error.middleware.js — Global error handler for the Express app
+// =============================================================================
+// This middleware catches any errors that happen during request processing.
+// It handles common error types (validation, duplicate keys, JWT) and sends
+// back a clear JSON error response to the frontend.
+// Must be registered AFTER all routes in server.js.
+// =============================================================================
 
-/**
- * Global error handling middleware
- * Handles different types of errors (validation, duplicate keys, JWT, etc.)
- * @param {Error} err - The error object
- * @param {Object} req - Express request object
- * @param {Object} res - Express response object
- * @param {Function} next - Express next function
- */
 const errorHandler = (err, req, res, next) => {
-  console.error(' Error:', err);
+  // Log the error so we can debug it
+  console.log('Error:', err);
 
-  // Handle Mongoose validation errors (missing required fields, etc.)
+  // 1. Handle Mongoose validation errors (e.g., missing required fields)
   if (err.name === 'ValidationError') {
-    const errors = Object.values(err.errors).map(e => ({
-      field: e.path,
-      message: e.message
-    }));
     return res.status(400).json({
       success: false,
-      message: 'Validation failed',
-      errors
+      message: 'Validation failed'
     });
   }
 
-  // Handle duplicate key errors (e.g., email already exists)
+  // 2. Handle duplicate key errors (e.g., email already exists in the database)
   if (err.code === 11000) {
     const field = Object.keys(err.keyPattern)[0];
     return res.status(400).json({
       success: false,
-      message: `${field} already exists`,
-      errors: [{ field, message: `This ${field} is already registered` }]
+      message: `${field} already exists`
     });
   }
 
-  // Handle JWT errors
+  // 3. Handle invalid JWT token errors
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
       success: false,
@@ -43,6 +36,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  // 4. Handle expired JWT token errors
   if (err.name === 'TokenExpiredError') {
     return res.status(401).json({
       success: false,
@@ -50,8 +44,8 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
-  // Default error response for anything else
-  res.status(err.statusCode || 500).json({
+  // 5. For any other error, send a generic 500 response
+  return res.status(err.statusCode || 500).json({
     success: false,
     message: err.message || 'Internal server error'
   });
